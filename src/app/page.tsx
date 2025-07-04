@@ -45,16 +45,16 @@ export default function Page() {
   // Initialize Lenis and GSAP ScrollTrigger integration
   useEffect(() => {
     // Initialize Lenis
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Custom easing
-      smooth: true,
-      smoothTouch: false, // Recommended for consistency
-      touchMultiplier: 1, // Adjust as needed
-      syncTouch: true, // Sync touch events
-      infinite: false,
-      lerp: 0.1, // Adjust for smoothness
-    });
+const lenis = new Lenis({
+  duration: 1.2,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  smoothWheel: true,
+  touchMultiplier: 1,
+  syncTouch: true,
+  infinite: false,
+  lerp: 0.1,
+});
+
 
     // Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
     lenis.on("scroll", ScrollTrigger.update);
