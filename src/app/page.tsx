@@ -27,43 +27,45 @@ const interFont = Roboto({
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Page() {
-  const heroRef = useRef(null);
-  const aboutRef = useRef(null);
-  const workRef = useRef(null);
-  const skillsRef = useRef(null);
-  const titleRef = useRef(null);
-  const descriptionRef = useRef(null);
-  const avatarRef = useRef(null);
-  const aboutTitleRef = useRef(null);
-  const aboutContentRef = useRef(null);
-  const resumeButtonRef = useRef(null);
-  const workTitleRef = useRef(null);
-  const workCardsRef = useRef([]);
-  const skillsTitleRef = useRef(null);
-  const skillsBadgesRef = useRef([]);
+  const heroRef = useRef<HTMLElement>(null);
+  const aboutRef = useRef<HTMLElement>(null);
+  const workRef = useRef<HTMLElement>(null);
+  const skillsRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
+  const aboutTitleRef = useRef<HTMLHeadingElement>(null);
+  const aboutContentRef = useRef<HTMLDivElement>(null);
+  const resumeButtonRef = useRef<HTMLDivElement>(null);
+  const workTitleRef = useRef<HTMLHeadingElement>(null);
+  const workCardsRef = useRef<HTMLDivElement[]>([]);
+  const skillsTitleRef = useRef<HTMLHeadingElement>(null);
+  const skillsBadgesRef = useRef<HTMLDivElement[]>([]);
 
   // Initialize Lenis and GSAP ScrollTrigger integration
   useEffect(() => {
     // Initialize Lenis
-const lenis = new Lenis({
-  duration: 1.2,
-  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smoothWheel: true,
-  touchMultiplier: 1,
-  syncTouch: true,
-  infinite: false,
-  lerp: 0.1,
-});
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 1,
+      syncTouch: true,
+      infinite: false,
+      lerp: 0.1,
+    });
 
+    // Create a function to handle the RAF callback
+    const handleRAF = (time: number) => {
+      lenis.raf(time * 1000); // Convert time from seconds to milliseconds
+    };
 
     // Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
     lenis.on("scroll", ScrollTrigger.update);
 
     // Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
     // This ensures Lenis's smooth scroll animation updates on each GSAP tick
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000); // Convert time from seconds to milliseconds
-    });
+    gsap.ticker.add(handleRAF);
 
     // Disable lag smoothing in GSAP to prevent any delay in scroll animations
     gsap.ticker.lagSmoothing(0);
@@ -200,9 +202,7 @@ const lenis = new Lenis({
       // Kill all ScrollTriggers
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       // Remove the GSAP ticker listener
-      gsap.ticker.remove(() => {
-        lenis.raf(time * 1000);
-      });
+      gsap.ticker.remove(handleRAF);
       // Destroy Lenis instance
       lenis.destroy();
     };
@@ -240,12 +240,13 @@ const lenis = new Lenis({
           <h2 ref={aboutTitleRef} className="text-4xl font-bold ">
             About
           </h2>
-          <Markdown
-            ref={aboutContentRef}
-            className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert"
-          >
-            {DATA.summary}
-          </Markdown>
+          <div ref={aboutContentRef}>
+            <Markdown
+              className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert"
+            >
+              {DATA.summary}
+            </Markdown>
+          </div>
           <div ref={resumeButtonRef} className="flex items-center justify-end mt-4">
             <Link href="/resume.pdf" target="_blank" rel="noopener noreferrer">
               <Button size={`sm`} variant={`outline`}>
@@ -263,7 +264,11 @@ const lenis = new Lenis({
             {DATA.work.map((work, id) => (
               <div
                 key={work.company}
-                ref={(el) => (workCardsRef.current[id] = el)}
+                ref={(el) => {
+                  if (el) {
+                    workCardsRef.current[id] = el;
+                  }
+                }}
               >
                 <ResumeCard
                   logoUrl={work.logoUrl}
@@ -303,14 +308,21 @@ const lenis = new Lenis({
 
             <div className="flex flex-wrap gap-1 items-center justify-center">
               {DATA.skills.map((skill, id) => (
-                <Badge
+                <div
                   key={skill.name}
-                  ref={(el) => (skillsBadgesRef.current[id] = el)}
-                  className={`hover:cursor-default transition-all duration-300 ease-in-out `}
+                  ref={(el: HTMLDivElement | null) => {
+                    if (el) {
+                      skillsBadgesRef.current[id] = el;
+                    }
+                  }}
                 >
-                  <span className="mr-2">{skill.icon}</span>
-                  {skill.name}
-                </Badge>
+                  <Badge
+                    className={`hover:cursor-default transition-all duration-300 ease-in-out `}
+                  >
+                    <span className="mr-2">{skill.icon}</span>
+                    {skill.name}
+                  </Badge>
+                </div>
               ))}
             </div>
           </div>

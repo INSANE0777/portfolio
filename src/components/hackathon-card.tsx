@@ -55,27 +55,30 @@ export function HackathonCard({
         }
       );
 
-      // Animate the Avatar
-      gsap.fromTo(
-        cardRef.current?.querySelector(".avatar-container"), // Target the div with the avatar
-        { opacity: 0, rotate: -30, scale: 0.8 },
-        {
-          opacity: 1,
-          rotate: 0,
-          scale: 1,
-          duration: 0.6,
-          ease: "elastic.out(1, 0.7)", // Bouncy effect
-          delay: 0.2, // Delay avatar animation slightly
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
+      // Animate the Avatar - with null check
+      const avatarContainer = cardRef.current?.querySelector(".avatar-container");
+      if (avatarContainer) {
+        gsap.fromTo(
+          avatarContainer,
+          { opacity: 0, rotate: -30, scale: 0.8 },
+          {
+            opacity: 1,
+            rotate: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.7)", // Bouncy effect
+            delay: 0.2, // Delay avatar animation slightly
+            scrollTrigger: {
+              trigger: cardRef.current,
+              start: "top 85%",
+              end: "bottom 20%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
 
-      // Animate the badges (links) with a stagger effect
+      // Animate the badges (links) with a stagger effect - with null check
       const badges = cardRef.current?.querySelectorAll(".badge-item");
       if (badges && badges.length > 0) {
         gsap.fromTo(

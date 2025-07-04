@@ -71,20 +71,26 @@ export function ProjectCard({
       );
 
       // Animate the Media (video/image) with a slight delay
-      entranceTl.fromTo(
-        cardRef.current?.querySelector("video, img"), // Target either video or img
-        { opacity: 0, y: 20, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power2.out" },
-        "-=0.4" // Start this animation 0.4s before the card's entrance animation ends
-      );
+      const mediaElement = cardRef.current?.querySelector("video, img");
+      if (mediaElement) {
+        entranceTl.fromTo(
+          mediaElement,
+          { opacity: 0, y: 20, scale: 0.95 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power2.out" },
+          "-=0.4" // Start this animation 0.4s before the card's entrance animation ends
+        );
+      }
 
       // Animate the Text Content (Title, Dates, Description)
-      entranceTl.fromTo(
-        cardRef.current?.querySelectorAll(".card-text-content > *"), // Target direct children of text content wrapper
-        { opacity: 0, y: 15 }, // Removed stagger from here, will stagger within next animation
-        { opacity: 1, y: 0, stagger: 0.08, duration: 0.5, ease: "power2.out" },
-        "-=0.3" // Start this animation 0.3s before the previous one ends
-      );
+      const textContentElements = cardRef.current?.querySelectorAll(".card-text-content > *");
+      if (textContentElements && textContentElements.length > 0) {
+        entranceTl.fromTo(
+          textContentElements,
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, stagger: 0.08, duration: 0.5, ease: "power2.out" },
+          "-=0.3" // Start this animation 0.3s before the previous one ends
+        );
+      }
 
       // Animate the Tags
       const tags = cardRef.current?.querySelectorAll(".project-tags .badge");
@@ -133,86 +139,94 @@ export function ProjectCard({
       );
 
       // Scroll back for Media
-      const mediaScrollBack = gsap.fromTo(
-        cardRef.current?.querySelector("video, img"),
-        { opacity: 1, y: 0, scale: 1 }, // Start from the end state
-        {
-          opacity: 0,
-          y: 20,
-          scale: 0.95,
-          duration: 0.6,
-          ease: "power2.in",
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-            scrub: true,
-          },
-        }
-      );
+      if (mediaElement) {
+        const mediaScrollBack = gsap.fromTo(
+          mediaElement,
+          { opacity: 1, y: 0, scale: 1 }, // Start from the end state
+          {
+            opacity: 0,
+            y: 20,
+            scale: 0.95,
+            duration: 0.6,
+            ease: "power2.in",
+            scrollTrigger: {
+              trigger: cardRef.current,
+              start: "top 85%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+              scrub: true,
+            },
+          }
+        );
+      }
 
       // Scroll back for Text Content
-      const textContentScrollBack = gsap.fromTo(
-        cardRef.current?.querySelectorAll(".card-text-content > *"),
-        { opacity: 1, y: 0 }, // Start from the end state
-        {
-          opacity: 0,
-          y: 15,
-          ease: "power2.in",
-          stagger: 0.08, // Stagger the reverse animation as well
-          duration: 0.5,
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-            scrub: true,
-          },
-        }
-      );
+      if (textContentElements && textContentElements.length > 0) {
+        const textContentScrollBack = gsap.fromTo(
+          textContentElements,
+          { opacity: 1, y: 0 }, // Start from the end state
+          {
+            opacity: 0,
+            y: 15,
+            ease: "power2.in",
+            stagger: 0.08, // Stagger the reverse animation as well
+            duration: 0.5,
+            scrollTrigger: {
+              trigger: cardRef.current,
+              start: "top 85%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+              scrub: true,
+            },
+          }
+        );
+      }
 
       // Scroll back for Tags
-      const tagsScrollBack = gsap.fromTo(
-        tags,
-        { opacity: 1, y: 0, scale: 1 }, // Start from the end state
-        {
-          opacity: 0,
-          y: 10,
-          scale: 0.8,
-          duration: 0.4,
-          ease: "power1.in",
-          stagger: 0.05,
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-            scrub: true,
-          },
-        }
-      );
+      if (tags && tags.length > 0) {
+        const tagsScrollBack = gsap.fromTo(
+          tags,
+          { opacity: 1, y: 0, scale: 1 }, // Start from the end state
+          {
+            opacity: 0,
+            y: 10,
+            scale: 0.8,
+            duration: 0.4,
+            ease: "power1.in",
+            stagger: 0.05,
+            scrollTrigger: {
+              trigger: cardRef.current,
+              start: "top 85%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+              scrub: true,
+            },
+          }
+        );
+      }
 
       // Scroll back for Links
-      const linksScrollBack = gsap.fromTo(
-        links,
-        { opacity: 1, y: 0, scale: 1 }, // Start from the end state
-        {
-          opacity: 0,
-          y: 10,
-          scale: 0.8,
-          duration: 0.4,
-          ease: "power1.in",
-          stagger: 0.08,
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-            scrub: true,
-          },
-        }
-      );
+      if (links && links.length > 0) {
+        const linksScrollBack = gsap.fromTo(
+          links,
+          { opacity: 1, y: 0, scale: 1 }, // Start from the end state
+          {
+            opacity: 0,
+            y: 10,
+            scale: 0.8,
+            duration: 0.4,
+            ease: "power1.in",
+            stagger: 0.08,
+            scrollTrigger: {
+              trigger: cardRef.current,
+              start: "top 85%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+              scrub: true,
+            },
+          }
+        );
+      }
 
     }, cardRef); // Pass the ref to gsap.context
 
